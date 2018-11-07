@@ -11,6 +11,7 @@ import (
 	"github.com/summerwind/h2spec/http2"
 	"github.com/summerwind/h2spec/log"
 	"github.com/summerwind/h2spec/reporter"
+	"github.com/summerwind/h2spec/sec"
 	"github.com/summerwind/h2spec/spec"
 )
 
@@ -22,6 +23,7 @@ func Run(c *config.Config) (bool, error) {
 		generic.Spec(),
 		http2.Spec(),
 		hpack.Spec(),
+		sec.Spec(),
 	}
 
 	start := time.Now()

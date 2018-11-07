@@ -37,6 +37,10 @@ func main() {
 	flags.Bool("dryrun", false, "Display only the title of test cases")
 	flags.BoolP("tls", "t", false, "Connect over TLS")
 	flags.BoolP("insecure", "k", false, "Don't verify server's certificate")
+	flags.IntP("requests", "n", 1000, "Number of requests to perform")
+	flags.IntP("concurrency", "c", 0, "Number of multiple requests to make at a time")
+	flags.Uint32P("slow-read-step", "", 255, "Number of bytes to read per time")
+	flags.DurationP("slow-read-interval", "", 100*time.Millisecond, "Duration between two time read")
 	flags.BoolP("verbose", "v", false, "Output verbose log")
 	flags.Bool("version", false, "Display version information and exit")
 	flags.Bool("help", false, "Display this help and exit")
@@ -111,6 +115,26 @@ func run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	requests, err := flags.GetInt("requests")
+	if err != nil {
+		return err
+	}
+
+	concurrency, err := flags.GetInt("concurrency")
+	if err != nil {
+		return err
+	}
+
+	slowReadStep, err := flags.GetUint32("slow-read-step")
+	if err != nil {
+		return err
+	}
+
+	slowReadInterval, err := flags.GetDuration("slow-read-interval")
+	if err != nil {
+		return err
+	}
+
 	verbose, err := flags.GetBool("verbose")
 	if err != nil {
 		return err
@@ -125,18 +149,22 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 
 	c := &config.Config{
-		Host:         host,
-		Port:         port,
-		Path:         path,
-		Timeout:      time.Duration(timeout) * time.Second,
-		MaxHeaderLen: maxHeaderLen,
-		JUnitReport:  junitReport,
-		Strict:       strict,
-		DryRun:       dryRun,
-		TLS:          tls,
-		Insecure:     insecure,
-		Verbose:      verbose,
-		Sections:     args,
+		Host:             host,
+		Port:             port,
+		Path:             path,
+		Timeout:          time.Duration(timeout) * time.Second,
+		MaxHeaderLen:     maxHeaderLen,
+		JUnitReport:      junitReport,
+		Strict:           strict,
+		DryRun:           dryRun,
+		TLS:              tls,
+		Insecure:         insecure,
+		Requests:         requests,
+		Concurrency:      concurrency,
+		SlowReadStep:     slowReadStep,
+		SlowReadInterval: slowReadInterval,
+		Verbose:          verbose,
+		Sections:         args,
 	}
 
 	success, err := h2spec.Run(c)

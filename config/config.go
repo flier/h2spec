@@ -15,23 +15,27 @@ const (
 
 // Config represents the configuration of h2spec.
 type Config struct {
-	Host         string
-	Port         int
-	Path         string
-	Timeout      time.Duration
-	MaxHeaderLen int
-	JUnitReport  string
-	Strict       bool
-	DryRun       bool
-	TLS          bool
-	Insecure     bool
-	Verbose      bool
-	Sections     []string
-	targetMap    map[string]bool
-	CertFile     string
-	CertKeyFile  string
-	Exec         string
-	FromPort     int
+	Host             string
+	Port             int
+	Path             string
+	Timeout          time.Duration
+	MaxHeaderLen     int
+	JUnitReport      string
+	Strict           bool
+	DryRun           bool
+	TLS              bool
+	Insecure         bool
+	Verbose          bool
+	Sections         []string
+	targetMap        map[string]bool
+	CertFile         string
+	CertKeyFile      string
+	Exec             string
+	FromPort         int
+	Requests         int
+	Concurrency      int
+	SlowReadStep     uint32
+	SlowReadInterval time.Duration
 }
 
 // Addr returns the string concatinated with hostname and port number.
