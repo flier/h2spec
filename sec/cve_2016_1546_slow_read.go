@@ -47,6 +47,12 @@ func SlowRead() *spec.TestGroup {
 				}
 
 				maxConcurrentStreams := int(conn.Settings[http2.SettingMaxConcurrentStreams])
+				if maxConcurrentStreams == 0 {
+					maxConcurrentStreams = c.Concurrency
+				}
+				if maxConcurrentStreams == 0 {
+					maxConcurrentStreams = defaultMaxConcurrentStreams
+				}
 
 				if maxStreams > 0 && maxConcurrentStreams > maxStreams {
 					maxConcurrentStreams = maxStreams

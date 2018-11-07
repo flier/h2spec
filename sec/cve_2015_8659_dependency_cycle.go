@@ -24,6 +24,12 @@ func DependencyCycle() *spec.TestGroup {
 			streams := make(map[uint32]int)
 			headers := spec.CommonHeaders(c)
 			maxConcurrentStreams := int(conn.Settings[http2.SettingMaxConcurrentStreams])
+			if maxConcurrentStreams == 0 {
+				maxConcurrentStreams = c.Concurrency
+			}
+			if maxConcurrentStreams == 0 {
+				maxConcurrentStreams = defaultMaxConcurrentStreams
+			}
 
 			for i := 0; i < maxConcurrentStreams; i++ {
 				streamID := uint32(i*2 + 1)

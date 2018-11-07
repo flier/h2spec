@@ -34,7 +34,7 @@ func StreamReuse() *spec.TestGroup {
 				return
 			}
 
-			return verifyStreamCloseOrGoAway(conn, http2.ErrCodeStreamClosed, 5)
+			return verifyStreamCloseOrGoAway(conn, 5)
 		},
 	})
 
@@ -61,14 +61,14 @@ func StreamReuse() *spec.TestGroup {
 				}
 			}
 
-			return verifyStreamCloseOrGoAway(conn, http2.ErrCodeStreamClosed, 1, 3, 5, 7, 9)
+			return verifyStreamCloseOrGoAway(conn, 1, 3, 5, 7, 9)
 		},
 	})
 
 	return tg
 }
 
-func verifyStreamCloseOrGoAway(conn *spec.Conn, errCode http2.ErrCode, streamIDs ...uint32) error {
+func verifyStreamCloseOrGoAway(conn *spec.Conn, streamIDs ...uint32) error {
 	var actual spec.Event
 
 	passed := false
@@ -89,7 +89,7 @@ func verifyStreamCloseOrGoAway(conn *spec.Conn, errCode http2.ErrCode, streamIDs
 				passed = len(streamIDs) == 0
 			}
 		case spec.GoAwayFrameEvent:
-			passed = ev.ErrCode == errCode
+			passed = ev.ErrCode == http2.ErrCodeStreamClosed || ev.ErrCode == http2.ErrCodeProtocol
 			actual = ev
 		case spec.TimeoutEvent:
 			if actual == nil {
@@ -106,7 +106,7 @@ func verifyStreamCloseOrGoAway(conn *spec.Conn, errCode http2.ErrCode, streamIDs
 		return &spec.TestError{
 			Expected: []string{
 				fmt.Sprintf("no more open stream: %v", streamIDs),
-				fmt.Sprintf(spec.ExpectedGoAwayFrame, errCode),
+				fmt.Sprintf(spec.ExpectedGoAwayFrame, []http2.ErrCode{http2.ErrCodeStreamClosed, http2.ErrCodeProtocol}),
 				spec.ExpectedConnectionClosed,
 			},
 			Actual: actual.String(),

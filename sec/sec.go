@@ -2,7 +2,11 @@ package sec
 
 import "github.com/summerwind/h2spec/spec"
 
-var key = "sec"
+const (
+	key = "sec"
+
+	defaultMaxConcurrentStreams = 100
+)
 
 func NewTestGroup(section string, name string) *spec.TestGroup {
 	return &spec.TestGroup{

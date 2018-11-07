@@ -51,7 +51,12 @@ func HPACKBomb() *spec.TestGroup {
 			streams[streamID] = 0
 
 			maxConcurrentStreams := int(conn.Settings[http2.SettingMaxConcurrentStreams])
-
+			if maxConcurrentStreams == 0 {
+				maxConcurrentStreams = c.Concurrency
+			}
+			if maxConcurrentStreams == 0 {
+				maxConcurrentStreams = defaultMaxConcurrentStreams
+			}
 			if maxConcurrentStreams > requests {
 				maxConcurrentStreams = requests
 			}
