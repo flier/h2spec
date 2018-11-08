@@ -53,11 +53,9 @@ func SlowRead() *spec.TestGroup {
 				if maxConcurrentStreams == 0 {
 					maxConcurrentStreams = defaultMaxConcurrentStreams
 				}
-
 				if maxStreams > 0 && maxConcurrentStreams > maxStreams {
 					maxConcurrentStreams = maxStreams
 				}
-
 				if concurrentStreams > 0 && maxConcurrentStreams > concurrentStreams {
 					maxConcurrentStreams = concurrentStreams
 				}
@@ -108,7 +106,6 @@ func SlowRead() *spec.TestGroup {
 								// ignore
 							case spec.WindowUpdateFrameEvent:
 								// ignore
-
 							case spec.DataFrameEvent:
 								if actual.StreamEnded() {
 									delete(streams, actual.StreamID)
@@ -144,6 +141,9 @@ func SlowRead() *spec.TestGroup {
 										return conn.WriteWindowUpdate(currentStreamID, readStep)
 									}()
 								}
+							case spec.RSTStreamFrameEvent:
+								delete(streams, actual.StreamID)
+
 							case spec.GoAwayFrameEvent:
 								if actual.ErrCode != http2.ErrCodeNo {
 									return &spec.TestError{
